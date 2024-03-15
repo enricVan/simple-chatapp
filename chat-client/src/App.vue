@@ -9,6 +9,7 @@ const messageText = ref("");
 const joined = ref(false);
 const name = ref("");
 const typingDisplay = ref("");
+const joiners = ref([]);
 
 onBeforeMount(() => {
   socket.emit("findAllMessages", {}, (res) => {
@@ -25,6 +26,10 @@ onBeforeMount(() => {
     } else {
       typingDisplay.value = "";
     }
+  });
+
+  socket.on("newUserJoined", (name) => {
+    joiners.value.push(`${name} has joined the chat`);
   });
 });
 
@@ -61,6 +66,12 @@ const emitTyping = () => {
       </form>
     </div>
     <div class="chat-container" v-else>
+      <div v-if="joiners">
+        <div v-for="joiner in joiners">
+          {{ joiner }}
+        </div>
+      </div>
+      <br />
       <div class="messages-container">
         <div v-for="message in messages">
           [{{ message.name }}]: {{ message.text }}
