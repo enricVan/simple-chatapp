@@ -95,12 +95,10 @@
               });
               this.text = '';
             } else {
-              // alert('You must join the room before sending messages!');
-              console.log('You must join the room before sending messages!');
-              this.socket.alerts.emit('alertToServer', {
-                message: 'You must join the room before sending messages!',
-              });
-              console.log('debug end');
+              this.socket.alerts.emit(
+                'alertToServer',
+                'You must join the room before sending messages!',
+              );
             }
           },
           receiveChatMessage(msg) {
@@ -108,6 +106,9 @@
           },
           receiveAlertMessage(msg) {
             this.alerts.push(msg);
+            setTimeout(() => {
+              this.alerts = this.alerts.filter(alert => alert !== msg);
+            }, 5000);
           },
           toggleRoomMembership() {
             if (this.isMemberOfActiveRoom) {
@@ -134,9 +135,17 @@
           });
           this.socket.chat.on('joinedRoom', room => {
             this.rooms[room] = true;
+            this.socket.alerts.emit(
+              'alertToServer',
+              `${this.username} joined room: ${room}`,
+            );
           });
           this.socket.chat.on('leftRoom', room => {
             this.rooms[room] = false;
+            this.socket.alerts.emit(
+              'alertToServer',
+              `${this.username} left room: ${room}`,
+            );
           });
 
           this.socket.alerts = io('http://localhost:3000/alert');

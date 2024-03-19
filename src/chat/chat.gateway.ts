@@ -15,7 +15,7 @@ export class ChatGateway implements OnGatewayInit {
   private logger: Logger = new Logger('ChatGateway');
 
   afterInit(server: any) {
-    this.logger.log('Initialized!');
+    this.logger.log('Initialized.');
   }
 
   @SubscribeMessage('chatToServer')
